@@ -36,32 +36,32 @@ function Chunk() {
     this.z = 0;
     this.type = 0; // 0 = world, 1 = object
     this.blockList = 0;
-};
+}
 
+class World {
+    constructor() {
+        this.worldSize = 192;
+        this.chunkBase = 16;
+        this.worldDivBase = this.worldSize/this.chunkBase;
+        this.chunkHeight = 160;
+        this.blocks = 0;
+        this.blockSize = 1;
+        this.material = 0;
+        this.chunks = undefined;
+        this.plane = 0; // bottom ground
 
-function World() {
-    this.worldSize = 192;
-    this.chunkBase = 16;
-    this.worldDivBase = this.worldSize/this.chunkBase;
-    this.chunkHeight = 160;
-    this.blocks = 0;
-    this.blockSize = 1;
-    this.material = 0;
-    this.chunks = undefined;
-    this.plane = 0; // bottom ground
+        this.ffTime = 0;
 
-    this.ffTime = 0;
+        this.last = 0; // Used for flood fill
 
-    this.last = 0; // Used for flood fill
+        this.floodFill = new Array();
 
-    this.floodFill = new Array();
+        // Debug stuff
+        this.wireframe = false;
+        this.showChunks = false;
+    }
 
-    // Debug stuff
-    this.wireframe = false;
-    this.showChunks = false;
-
-
-    World.prototype.Init = function() {
+    Init() {
 
         // Initiate blocks
         this.blocks = new Array();
@@ -123,9 +123,9 @@ function World() {
         game.scene.add(mesh);
 
         this.RebuildMaterial(false);
-    };
+    }
 
-    World.prototype.RebuildMaterial = function(wireframe) {
+    RebuildMaterial(wireframe) {
         this.wireframe = wireframe;
         this.material = new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors, wireframe: this.wireframe});
 //this.material = new THREE.MeshPhongMaterial( {
@@ -133,9 +133,9 @@ function World() {
 //			side: THREE.SingleSide, vertexColors: THREE.VertexColors
 //} );
         
-    };
+    }
 
-    World.prototype.PlaceObject = function(x,y,z, chunk) {
+    PlaceObject(x, y, z, chunk) {
         for (var i = 0; i < chunk.blockList.length; i++) {
             chunk.mesh.updateMatrixWorld();
             var b = chunk.blockList[i];
@@ -163,18 +163,18 @@ function World() {
             }
         }
         this.RebuildDirtyChunks();
-    };
+    }
 
-    World.prototype.IsWithinWorld = function(x,y,z) {
+    IsWithinWorld(x, y, z) {
             if(x > 0 && x < game.world.worldSize - 1 &&
                y > 0 && y < game.world.chunkHeight - 1 &&
                z > 4 && z < game.world.worldSize - 1) {
                 return true;
             }
             return false;
-    };
+    }
 
-    World.prototype.Explode = function(x,y,z, power, onlyExplode) {
+    Explode(x, y, z, power, onlyExplode) {
         // Remove blocks.
         this.exploded = 1;
         var pow = power*power;
@@ -182,7 +182,7 @@ function World() {
         for(var rx = x+power; rx >= x-power; rx--) {
             for(var rz = z+power; rz >= z-power; rz--) {
                 for(var ry = y+power; ry >= y-power; ry--) {
-                    val = (rx-x)*(rx-x)+(ry-y)*(ry-y)+(rz-z)*(rz-z);
+                    let val = (rx-x)*(rx-x)+(ry-y)*(ry-y)+(rz-z)*(rz-z);
                     if(val <= pow) {
                         this.RemoveBlock(rx,ry,rz);
 
@@ -215,9 +215,9 @@ function World() {
             this.floodFill.push(blockList);
 //            this.RemoveHangingBlocks(blockList);
         }
-    };
+    }
 
-    World.prototype.DrawStats = function() {
+    DrawStats() {
        var vblocks = 0,blocks = 0;
        var vtriangles = 0, triangles = 0;
        var vchunks=0, chunks = 0;
@@ -241,10 +241,9 @@ function World() {
                             "[Visible] Blocks: "+vblocks + " Triangles: "+vtriangles + " Chunks: "+vchunks+"<br>"+
                             "[Particle Engine] Free: "+phys_stat.free+ "/"+phys_stat.total);
                 
-    }; 
+    }
 
-
-    World.prototype.RebuildDirtyChunks = function(buildAll) {
+    RebuildDirtyChunks(buildAll) {
         for(var x = 0; x < this.chunks.length; x++) {
             for(var z = 0; z < this.chunks.length; z++) {
                 if(buildAll == 1 || this.chunks[x][z].dirty == true) {
@@ -253,9 +252,9 @@ function World() {
                 }
             }
         }
-    };
+    }
 
-    World.prototype.Draw = function(time, delta) {
+    Draw(time, delta) {
         if((this.ffTime+=delta) > 0.1) {
             if(this.floodFill.length > 0 && this.exploded != 1) {
                 this.RemoveHangingBlocks(this.floodFill.pop());
@@ -264,31 +263,30 @@ function World() {
         }
        this.DrawStats();
        this.exploded = 0;
-    };
+    }
 
-    World.prototype.componentToHex = function(c) {
+    componentToHex(c) {
         var hex = c.toString(16);
         return hex.length == 1 ? "0" + hex : hex;
-    };
+    }
 
-    World.prototype.rgbToHex = function(r, g, b) {
+    rgbToHex(r, g, b) {
         if(r < 0) r = 0;
         if(g < 0) g = 0;
         var hex = this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
         return parseInt('0x'+hex.substring(0, 6));
-    };
+    }
 
-    World.prototype.GetChunk = function(x,z) {
+    GetChunk(x, z) {
         var posx = parseInt(x  / (this.chunkBase));
         var posz = parseInt(z  / (this.chunkBase));
         if(posx < 0 || posz < 0 ) {
             return undefined;
         }
         return this.chunks[posx][posz];
-    };
+    }
 
-
-    World.prototype.RemoveHangingBlocks = function(blocks) {
+    RemoveHangingBlocks(blocks) {
         var newChunks = new Array();
         var removeBlocks = new Array();
         var all = new Array();
@@ -384,9 +382,9 @@ function World() {
         }
         this.RebuildDirtyChunks();
 
-    };
+    }
 
-    World.prototype.IsBlockHidden = function(x,y,z) {
+    IsBlockHidden(x, y, z) {
         if((this.blocks[x][y][z] >> 8) == 0) {
             return true;
         }
@@ -427,9 +425,9 @@ function World() {
             return true;
         }
         return false;
-    };
+    }
 
-    World.prototype.FloodFill = function(start) {
+    FloodFill(start) {
        // var COLOR1 = lfsr.rand()*255;
        // var COLOR2 = lfsr.rand()*255;
        // var COLOR3 = lfsr.rand()*255;
@@ -482,9 +480,9 @@ function World() {
 
         this.blocks[start.x][start.y][start.z] |= 0x40;
         return {"result": false, "vals": result, "all": all};
-    };
+    }
 
-    World.prototype.SmokeBlock = function(x,y,z) {
+    SmokeBlock(x, y, z) {
         var block = game.phys.Get();
         if(block != undefined) {
             // Random colors
@@ -502,9 +500,9 @@ function World() {
                          lfsr.rand()*1, 2, PHYS_SMOKE);
 
         }
-    };
+    }
 
-    World.prototype.ExplosionBlock = function(x,y,z) {
+    ExplosionBlock(x, y, z) {
         var block = game.phys.Get();
         if(block != undefined) {
             // Random colors
@@ -519,9 +517,9 @@ function World() {
                          b,
                          lfsr.rand()*4, 0.3);
         }
-    };
+    }
 
-    World.prototype.RemoveBlock = function(x,y,z) {
+    RemoveBlock(x, y, z) {
         if(x < 0 || y < 0 || z < 0 || x > this.worldSize-1 || y > this.chunkHeight-1 || z > this.worldSize-1) {
             return;
         }
@@ -551,9 +549,9 @@ function World() {
             }
            this.blocks[x][y][z] = 0;
         }
-    };
+    }
 
-    World.prototype.AddBlock = function(x, y, z, color) {
+    AddBlock(x, y, z, color) {
         var size = 1/this.blockSize;
 
         if(x < 0 || y < 0 || z < 0 || x > this.worldSize-1 || y > this.chunkHeight-1 || z > this.worldSize-1) {
@@ -566,18 +564,17 @@ function World() {
             this.blocks[x][y][z] = (color[0] & 0xFF) << 24 | (color[1] & 0xFF) << 16 | (color[2] & 0xFF) << 8 | 0 & 0xFF;
             chunk.dirty = true;
         }
-    };
+    }
 
-
-    World.prototype.SameColor = function(block1, block2) {
+    SameColor(block1, block2) {
         if( ((block1 >> 8) & 0xFFFFFF) == ((block2 >> 8) & 0xFFFFFF) && block1 != 0 && block2 != 0) {
             return true;
         }
         return false;
-    };
+    }
 
     // Given world position
-    World.prototype.RebuildChunk = function(chunk) {
+    RebuildChunk(chunk) {
         var sides = 0;
 
         var vertices = [];
@@ -947,7 +944,7 @@ function World() {
         chunk.dirty = false;
         game.scene.add( chunk.mesh );
         chunk.mesh.visible = true;
-    };
+    }
 }
 
 

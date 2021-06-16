@@ -2,62 +2,64 @@
 // Author: Nergal
 // Date: 2015-11-17
 //==============================================================================
-"use strict";
 
-function Game() {
-    this.container;
-    this.scene;
-    this.camera;
-    this.renderer;
-    this.stats;
-    this.clock;
-    this.controls;
 
-    // Scene settings
-    this.screenWidth = window.innerWidth;
-    this.screenHeight = window.innerHeight;
-    this.viewAngle = 10;
-    this.aspect = this.screenWidth/this.screenHeight;
-    this.near = 10;
-    this.far = 3000;
-    this.invMaxFps = 1/60;
-    this.frameDelta = 0;
+class Game {
+    constructor() {
+        this.container;
+        this.scene;
+        this.camera;
+        this.renderer;
+        this.stats;
+        this.clock;
+        this.controls;
 
-    // Procedurally generated stuff
-    this.proc = undefined;
-    this.rollOverMesh = undefined;
-    this.isShiftDown = 0;
-    this.isADown = 0;
-    this.raycaster = 0;
-    this.mouse = 0;
+        // Scene settings
+        this.screenWidth = window.innerWidth;
+        this.screenHeight = window.innerHeight;
+        this.viewAngle = 10;
+        this.aspect = this.screenWidth/this.screenHeight;
+        this.near = 10;
+        this.far = 3000;
+        this.invMaxFps = 1/60;
+        this.frameDelta = 0;
 
-    // Object arrays
-    this.objects = [];
-    this.world = undefined;
-    this.phys = undefined;
+        // Procedurally generated stuff
+        this.proc = undefined;
+        this.rollOverMesh = undefined;
+        this.isShiftDown = 0;
+        this.isADown = 0;
+        this.raycaster = 0;
+        this.mouse = 0;
 
-    // Modes
-    this.mode = "edit"; // play / edit
+        // Object arrays
+        this.objects = [];
+        this.world = undefined;
+        this.phys = undefined;
 
-    // Should be in player later...
-    this.player = undefined;
-    this.keyboard = 0;
-    this.box = 0;
-    this.inputTime = 0;
+        // Modes
+        this.mode = "edit"; // play / edit
+
+        // Should be in player later...
+        this.player = undefined;
+        this.keyboard = 0;
+        this.box = 0;
+        this.inputTime = 0;
+    }
 
     //==========================================================
     // InitScene
     //==========================================================
-    Game.prototype.initScene = function() {
+    initScene() {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(20, this.aspect, this.near, this.far);
         this.scene.add(this.camera);
-    };
+    }
 
     //==========================================================
     // Init other stuff
     //==========================================================
-    Game.prototype.Init = function(mapId) {
+    Init(mapId) {
         this.clock = new THREE.Clock();
         this.stats = new Stats();
         this.stats = new Stats();
@@ -168,41 +170,41 @@ function Game() {
         vox.LoadModel("maps/monu9_test2.vox", function(name){game.player.Init("test");}, "Map1", TYPE_MAP);
 
         this.animate();
-    };
-    
-    Game.prototype.onWindowResize = function() {
+    }
+
+    onWindowResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize( window.innerWidth, window.innerHeight );
-    };
+    }
 
-    Game.prototype.getDistance = function(v1, v2) {
+    getDistance(v1, v2) {
         var dx = v1.x - v2.x;
         var dy = v1.y - v2.y;
         var dz = v1.z - v2.z;
         return Math.sqrt(dx*dx+dy*dy+dz*dz);
-    };
+    }
 
     //==========================================================
     // Render
     //==========================================================
-    Game.prototype.render = function() {
+    render() {
         this.renderer.render(this.scene, this.camera);
-    };
+    }
 
     //==========================================================
     // Animate
     //==========================================================
-    Game.prototype.animate = function() {
+    animate() {
         this.animId = requestAnimationFrame(this.animate.bind(this));
         this.render();
         this.update();
-    };
+    }
 
     //==========================================================
     // Update
     //==========================================================
-    Game.prototype.update = function() {
+    update() {
         var delta = this.clock.getDelta(),
         time = this.clock.getElapsedTime() * 10;
 
@@ -265,12 +267,12 @@ function Game() {
 
         }	
         this.stats.update();
-    };
+    }
 
-    Game.prototype.rand = function(min, max, n) {
+    rand(min, max, n) {
         var r, n = n||0;
         if (min < 0) r = min + Math.random() * (Math.abs(min)+max);
         else r = min + Math.random() * max;
         return r.toFixed(n)*1;
-    };
+    }
 }

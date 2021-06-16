@@ -17,63 +17,65 @@ const MOVE_RIGHT = 3;
 const MOVE_UP = 4;
 const MOVE_DOWN = 5;
 
-function Player () {
-    this.name = "John Doe";
-    this.hp = 0;
-    this.weapon = WEAPON_ROCKET;
-    this.rotateAngle = 0;
-    this.moveDistance = 0;
-    // TBD: Make array of these with constants for lookup
-    this.run1Chunk = undefined;
-    this.run2Chunk = undefined;
-    this.run1RocketChunk = undefined;
-    this.run2RocketChunk = undefined;
-    this.run1ShotgunChunk = undefined;
-    this.run2ShotgunChunk = undefined;
-    this.jumpChunk = undefined;
-    this.jumpRocketChunk = undefined;
-    this.jumpShotgunChunk = undefined;
-    this.standChunk = undefined;
-    this.standRocketChunk = undefined;
-    this.standShotgunChunk = undefined;
-    this.fallChunk = undefined;
-    this.fallRocketChunk = undefined;
-    this.fallShotgunChunk = undefined;
-    this.shootChunk = undefined;
-    this.shootRocketChunk = undefined;
-    this.shootShotgunChunk = undefined;
-    
-    this.mesh = undefined;
-    this.chunk = undefined;
-    this.currentModel = MODEL_STAND;
-    this.runTime = 0;
-    this.jumpTime = 0;
-    this.cameraAttached = false;
-    this.camera = new THREE.Object3D();
-    this.mass = 4;
-    this.area = 1;
-    this.vy = 1;
-    this.avg_ay = 1;
-    this.gravity = 9.82;
-    this.airDensity = 1.2;
-    this.jumping = false;
-    this.sampleObjectsTime = 0;
-    this.keyboard = new THREEx.KeyboardState();
-    this.shooting = false;
+class Player {
+    constructor() {
+        this.name = "John Doe";
+        this.hp = 0;
+        this.weapon = WEAPON_ROCKET;
+        this.rotateAngle = 0;
+        this.moveDistance = 0;
+        // TBD: Make array of these with constants for lookup
+        this.run1Chunk = undefined;
+        this.run2Chunk = undefined;
+        this.run1RocketChunk = undefined;
+        this.run2RocketChunk = undefined;
+        this.run1ShotgunChunk = undefined;
+        this.run2ShotgunChunk = undefined;
+        this.jumpChunk = undefined;
+        this.jumpRocketChunk = undefined;
+        this.jumpShotgunChunk = undefined;
+        this.standChunk = undefined;
+        this.standRocketChunk = undefined;
+        this.standShotgunChunk = undefined;
+        this.fallChunk = undefined;
+        this.fallRocketChunk = undefined;
+        this.fallShotgunChunk = undefined;
+        this.shootChunk = undefined;
+        this.shootRocketChunk = undefined;
+        this.shootShotgunChunk = undefined;
 
-    // Camera
-    this.attachedCamera = false;
-    this.cameraObj = undefined;
+        this.mesh = undefined;
+        this.chunk = undefined;
+        this.currentModel = MODEL_STAND;
+        this.runTime = 0;
+        this.jumpTime = 0;
+        this.cameraAttached = false;
+        this.camera = new THREE.Object3D();
+        this.mass = 4;
+        this.area = 1;
+        this.vy = 1;
+        this.avg_ay = 1;
+        this.gravity = 9.82;
+        this.airDensity = 1.2;
+        this.jumping = false;
+        this.sampleObjectsTime = 0;
+        this.keyboard = new THREEx.KeyboardState();
+        this.shooting = false;
 
-    // CD props
-    this.canWalkLeft = true;
-    this.canWalkRight = true;
-    this.canWalkForward = true;
-    this.canWalkBackward = true;
-    this.canJump = true;
-    this.canFall = true;
+        // Camera
+        this.attachedCamera = false;
+        this.cameraObj = undefined;
 
-    Player.prototype.Init = function(name) {
+        // CD props
+        this.canWalkLeft = true;
+        this.canWalkRight = true;
+        this.canWalkForward = true;
+        this.canWalkBackward = true;
+        this.canJump = true;
+        this.canFall = true;
+    }
+
+    Init(name) {
         this.AddBindings();
         this.name = name;
         this.hp = MAX_HP;
@@ -120,9 +122,9 @@ function Player () {
         this.cameraObj.rotation.set(Math.PI/1.5, 0, -Math.PI);
         this.weapon = WEAPON_SHOTGUN;
 
-    };
+    }
 
-    Player.prototype.SwitchModel = function(model) {
+    SwitchModel(model) {
         if(this.shooting) {
             return;
         }
@@ -248,23 +250,22 @@ function Player () {
         this.mesh.updateMatrixWorld();
         this.mesh.add(this.cameraObj);
         this.mesh.visible = true;
-    };
+    }
 
-    Player.prototype.AddBindings = function() {
+    AddBindings() {
         $(document).mouseup(this.OnMouseUp.bind(this));
 	    $(document).mousemove(this.OnMouseMove.bind(this));
 	    $(document).mousedown(this.OnMouseDown.bind(this));
 //	    $(document).keydown(this.KeyDown.bind(this));
-    };
+    }
 
-    
-    Player.prototype.RemoveBindings = function() {
+    RemoveBindings() {
         $(document).unbind('mouseup');
 	    $(document).unbind('mousemove');
         $(document).unbind('mousedown');
-    };
+    }
 
-    Player.prototype.OnMouseMove = function(jevent) {
+    OnMouseMove(jevent) {
         var event = jevent.originalEvent; 
         var movementX = event.movementX || event.mozMovementX  ||0;
         var movementZ = event.movementZ || event.mozMovementZ  || 0;
@@ -278,9 +279,9 @@ function Player () {
             this.mesh.matrix.multiply(rotObjectMatrix);
             this.mesh.rotation.setFromRotationMatrix(this.mesh.matrix);
         }
-    };
+    }
 
-    Player.prototype.OnMouseDown = function(event) {
+    OnMouseDown(event) {
         if(this.dead) {
             return;
         }
@@ -290,9 +291,9 @@ function Player () {
         }
         this.SwitchModel(MODEL_SHOOT);
         this.shooting = true;
-    };
+    }
 
-    Player.prototype.OnMouseUp = function(event) {
+    OnMouseUp(event) {
         if(this.dead) {
             return;
         }
@@ -310,9 +311,9 @@ function Player () {
         } else if(mouseButton == 3) {
             this.CreateGrenade();
         }
-    };
+    }
 
-    Player.prototype.CreateGrenade = function() {
+    CreateGrenade() {
         var block = game.phys.Get();
 
         var pos = new THREE.Vector3(3,2,5);
@@ -335,9 +336,9 @@ function Player () {
         }
 
 
-    };
+    }
 
-    Player.prototype.CreateShot = function() {
+    CreateShot() {
 
         var pos1 = new THREE.Vector3(3,0,3);
         var gpos1 = pos1.applyMatrix4(this.mesh.matrix);
@@ -405,9 +406,9 @@ function Player () {
                 block.mesh.scale.set(0.5,0.5,0.5);
             }
         }
-    };
+    }
 
-    Player.prototype.CreateMissile = function() {
+    CreateMissile() {
         var block = game.phys.Get();
 
         var pos = new THREE.Vector3(3,2,5);
@@ -441,14 +442,14 @@ function Player () {
                          1 // bounces
                         );
         }
-    };
+    }
 
     // TBD: Might only have one weapon?
-    Player.prototype.ChangeWeapon = function(weapon_id) {
+    ChangeWeapon(weapon_id) {
         this.weapon = weapon_id;
-    };
+    }
 
-    Player.prototype.CanMove = function(type) {
+    CanMove(type) {
         //this.mesh.updateMatrixWorld();
         for (var i = 0; i < this.chunk.blockList.length; i+=2) {
             var b = this.chunk.blockList[i];
@@ -488,9 +489,9 @@ function Player () {
             }
         }
         return true;
-    };
+    }
 
-    Player.prototype.KeyDown = function() {
+    KeyDown() {
         if(this.keyboard.pressed("1")) {
             this.weapon = WEAPON_ROCKET;
         }
@@ -587,15 +588,15 @@ function Player () {
                 }
             }
         }
-    };
+    }
 
-    Player.prototype.KeyUp = function() {
+    KeyUp() {
         if(this.keyboard.pressed("space")) {
            // this.jumping = false;
         }
-    };
+    }
 
-    Player.prototype.Run = function() {
+    Run() {
         if(this.runTime > 0.2) {
             if(this.currentModel == MODEL_RUN2) {
                 this.SwitchModel(MODEL_RUN1);
@@ -604,9 +605,9 @@ function Player () {
             }
             this.runTime = 0;
         }
-    };
+    }
 
-    Player.prototype.Draw = function(time, delta) {
+    Draw(time, delta) {
         if(this.mesh == undefined) {
             return;
         }
@@ -710,9 +711,9 @@ function Player () {
             }
         }
 
-    };
+    }
 
-    Player.prototype.Die = function() {
+    Die() {
         // Explode player.
         console.log("Player died.");
         for (var i = 0; i < this.chunk.blockList.length; i+=3) {
@@ -740,10 +741,10 @@ function Player () {
         }
         this.mesh.visible=false;
 
-    };
+    }
 
-    Player.prototype.Spawn = function(x,y,z) {
+    Spawn(x, y, z) {
         // Box of blocks -> remove all but the ones in mesh.
 
-    };
+    }
 }

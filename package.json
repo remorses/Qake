@@ -1,0 +1,25 @@
+{
+  "name": "qake",
+  "version": "1.0.0",
+  "description": "Play the game here: https://qake.se/demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/remorses/Qake.git"
+  },
+  "keywords": [],
+  "author": "Tommaso De Rossi, morse <beats.by.morse@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/remorses/Qake/issues"
+  },
+  "homepage": "https://github.com/remorses/Qake#readme",
+  "dependencies": {
+    "@types/three": "^0.129.1",
+    "jquery": "^3.6.0",
+    "three": "^0.129.0"
+  }
+}

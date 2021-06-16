@@ -1,13 +1,15 @@
-use "strict"
 
 
-function Objects () {
-    this.type = 0;
-    this.hp = 0;
-    this.weapon = WEAPON_SHOTGUN;
-    this.chunk = undefined;
 
-    Objects.prototype.Init = function(name, position, chunk) {
+class Objects {
+    constructor() {
+        this.type = 0;
+        this.hp = 0;
+        this.weapon = WEAPON_SHOTGUN;
+        this.chunk = undefined;
+    }
+
+    Init(name, position, chunk) {
         this.name = name;
         this.hp = MAX_HP;
 
@@ -49,15 +51,14 @@ function Objects () {
         game.world.RebuildChunk(chunk);
         game.phys.CreateMeshBlock(chunk);
         this.chunk = chunk;
-    };
+    }
 
-    Objects.prototype.Draw = function(time, delta) {
+    Draw(time, delta) {
         this.CheckKeyPress();
 
-    };
+    }
 
-    Objects.prototype.Hit = function(x,y,z, dmg) {
+    Hit(x, y, z, dmg) {
         this.hp -= dmg;
-    };
-    
+    }
 }

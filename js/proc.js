@@ -1,15 +1,17 @@
-function Proc() {
-    this.worldSize = 0;
-    this.worldSpace = 0;
-    this.landHeight = 4;
+class Proc {
+    constructor() {
+        this.worldSize = 0;
+        this.worldSpace = 0;
+        this.landHeight = 4;
 
-    this.currentType = 0;
+        this.currentType = 0;
 
-    this.addBuffer = [];
-    this.lastBuffer = [];
-    this.freeDraw = [];
+        this.addBuffer = [];
+        this.lastBuffer = [];
+        this.freeDraw = [];
+    }
 
-    Proc.prototype.DrawType = function(x, y, z) {
+    DrawType(x, y, z) {
         switch(this.currentType) {
             case 2: // block 
              this.Block(x, y, z, 0);
@@ -28,9 +30,9 @@ function Proc() {
              break;
         }
         //game.world.RebuildDirtyChunks();
-    };
+    }
 
-    Proc.prototype.FreeDrawock = function() {
+    FreeDrawock() {
        var from = this.freeaw.pop();
        var to = this.freeDr.pop();
        var height = $('#heit').text();
@@ -60,37 +62,37 @@ function Proc() {
                }
            }
        }
-    };
+    }
 
-    Proc.prototype.Add = function(x,y,z,color) {
+    Add(x, y, z, color) {
         game.world.AddBlock(x,y,z, color);
         this.addBuffer.push(new THREE.Vector3(x,y,z));
-    };
+    }
 
-    Proc.prototype.UndoLast = function() {
+    UndoLast() {
         var blockPos;
         while((blockPos = this.lastBuffer.pop()) != undefined) {
             game.world.RemoveBlock(blockPos.x, blockPos.y, blockPos.z);
             this.addBuffer.pop();
         }
         game.world.RebuildDirtyChunks();
-    };
+    }
 
-    Proc.prototype.Undo = function() {
+    Undo() {
         var blockPos = this.addBuffer.pop();
         if(blockPos != undefined) {
             game.world.RemoveBlock(blockPos.x, blockPos.y, blockPos.z);
             this.lastBuffer.pop();
             game.world.RebuildDirtyChunks();
         }
-    };
+    }
 
-    Proc.prototype.Remove = function(x, y, z) {
+    Remove(x, y, z) {
         // TBD: Clean up undo buffers
         game.world.RemoveBlock(x, y, z);
-    };
+    }
 
-    Proc.prototype.Block = function(posX, posY, posZ, type) {
+    Block(posX, posY, posZ, type) {
         var width = $('#width').text();
         var height = $('#height').text();
         var color = $('#color2').text();
@@ -120,9 +122,9 @@ function Proc() {
                 }
             }
         }
-    };
+    }
 
-    Proc.prototype.Mushroom = function() {
+    Mushroom() {
         var pos = this.GetRandomPoint();
         var stemHeight = this.landHeight;
         var base = stemHeight+8;
@@ -148,16 +150,14 @@ function Proc() {
                 }
             }
         }
-    };
+    }
 
-
-
-    Proc.prototype.GetRandomPoint = function() {
+    GetRandomPoint() {
         return new THREE.Vector3(Math.round(Math.random()*game.world.worldSize),0,
                                  Math.round(Math.random()*game.world.worldSize));
-    };
+    }
 
-    Proc.prototype.Init = function(worldSize) {
+    Init(worldSize) {
         this.worldSize = worldSize;
 
         this.worldSpace = new Array(worldSize);
@@ -167,9 +167,9 @@ function Proc() {
                 this.worldSpace[x][z] = 0;
             }
         }
-    };
+    }
 
-    Proc.prototype.CheckFreeSpace = function(x_,z_,size) {
+    CheckFreeSpace(x_, z_, size) {
         for(var x = x_ - size/2; x < x_+size/2; x++) {
             for(var z = z_ - size/2; z < z_+size/2; z++) {
                 if(this.worldSpace[x][z] != 0) {
@@ -181,9 +181,9 @@ function Proc() {
             }
         }
         return 1;
-    };
+    }
 
-    Proc.prototype.Tree = function() {
+    Tree() {
         var height = Math.round(Math.random()*game.world.chunkHeight);
         var width = 3+Math.round(Math.random()*10);
         var pos = this.GetRandomPoint();
@@ -202,24 +202,24 @@ function Proc() {
 
 
         //DrawSphere(_x, top, _z, 40, 12, 40, 26571);
-    };
+    }
 
-   // Proc.prototype.Block = function(size, height) {
-   //     var pos = this.GetRandomPoint();
-   //     for(var x = 0; x < size; x++) {
-   //         for(var z = 0; z < size; z++) {
-   //             for(var y = this.landHeight; y < this.landHeight+height; y++) {
-   //                 game.world.AddBlock(pos.x+x, y, pos.z+z, 5);
-   //             }
-   //         }
-   //     }
-   // };
+    // Proc.prototype.Block = function(size, height) {
+    //     var pos = this.GetRandomPoint();
+    //     for(var x = 0; x < size; x++) {
+    //         for(var z = 0; z < size; z++) {
+    //             for(var y = this.landHeight; y < this.landHeight+height; y++) {
+    //                 game.world.AddBlock(pos.x+x, y, pos.z+z, 5);
+    //             }
+    //         }
+    //     }
+    // };
 
-    Proc.prototype.GetRand = function(min,max) {
+    GetRand(min, max) {
         return Math.round(min+Math.random()*(max-min));
-    };
+    }
 
-    Proc.prototype.Rock = function() {
+    Rock() {
         var pos = this.GetRandomPoint();
         var w1 = this.GetRand(10,40);
         var w2 = this.GetRand(10,40);
@@ -262,10 +262,9 @@ function Proc() {
                 }
             }
         }
-    };
+    }
 
-
-    Proc.prototype.Flower3 = function() {
+    Flower3() {
         var pos = this.GetRandomPoint();
         var maxZ = 1+Math.round(Math.random()*2);
         var zCurrent = 0;
@@ -295,9 +294,9 @@ function Proc() {
             }
         }
         game.world.AddBlock(pos.x+maxZ+1, height, pos.z, Math.random()>0.5? 10: 6);
-    };
+    }
 
-    Proc.prototype.Flower2 = function() {
+    Flower2() {
         var pos = this.GetRandomPoint();
         var maxZ = 1+Math.round(Math.random()*2);
         var zCurrent = 0;
@@ -323,18 +322,18 @@ function Proc() {
         game.world.AddBlock(pos.x+maxZ, height, pos.z, 8);
 
         game.world.AddBlock(pos.x+maxZ+1, height, pos.z, Math.random()>0.5? 6: 9);
-    };
+    }
 
-    Proc.prototype.Flower1 = function() {
+    Flower1() {
         var height = this.GetRand(2,4);
         var pos = this.GetRandomPoint();
         for(var y = this.landHeight; y < this.landHeight+height; y++) {
             game.world.AddBlock(pos.x, y, pos.z, 4);
         }
         game.world.AddBlock(pos.x, y, pos.z, 6);
-    };
+    }
 
-    Proc.prototype.Grass = function() {
+    Grass() {
         var pos = this.GetRandomPoint();
         var maxY = 2+Math.round(Math.random()*2);
         var yCurrent = 0;
@@ -345,9 +344,9 @@ function Proc() {
             }
             yCurrent++;
         }
-    };
+    }
 
-    Proc.prototype.Land = function(size) {
+    Land(size) {
         var color = 0;
         for(var y = 0; y < this.landHeight; y++) { 
             for(var x = 0; x < size; x++) {
@@ -366,5 +365,5 @@ function Proc() {
                 }
             }
         }
-    };
-};
+    }
+}
